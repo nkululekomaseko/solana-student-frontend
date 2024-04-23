@@ -18,10 +18,13 @@ import { useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Loader2 } from 'lucide-react';
 import {
+  Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  sendAndConfirmTransaction,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
 } from '@solana/web3.js';
 import {
   Card,
@@ -31,6 +34,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Textarea } from './ui/textarea';
+import { StudentIntro } from '@/app/models/StudentIntro';
+import dynamic from 'next/dynamic';
+
+const STUDENT_INTRO_PROGRAM_ID = 'HdE95RSVsdb315jfJtaykXhXY478h53X6okDupVfY9yf';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Must not be empty'),
@@ -54,20 +61,59 @@ const StudentIntroForm = () => {
   });
 
   const onSubmit = async (values: formSchemaType) => {
-    const { name, message } = values;
+    const studentIntro = new StudentIntro(values.name, values.message);
 
-    console.log(`Name: ${name}\nMessage: ${message}`);
+    console.log(`Student Intro: ${JSON.stringify(values, null, 2)}`);
 
     setTxSignature('');
 
     if (!connection || !publicKey) {
       return;
     }
-  };
 
-  if (!publicKey) {
-    return <p>Connect to a wallet</p>;
-  }
+    const buffer = studentIntro.serialize();
+    const transaction = new Transaction();
+
+    const [pda] = PublicKey.findProgramAddressSync(
+      [publicKey.toBuffer()],
+      new PublicKey(STUDENT_INTRO_PROGRAM_ID)
+    );
+
+    console.log('pda: ', pda.toBase58());
+
+    const instruction = new TransactionInstruction({
+      keys: [
+        {
+          pubkey: publicKey,
+          isSigner: true,
+          isWritable: false,
+        },
+        { pubkey: pda, isSigner: false, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      data: buffer,
+      programId: new PublicKey(STUDENT_INTRO_PROGRAM_ID),
+    });
+
+    transaction.add(instruction);
+
+    setLoading(true);
+    try {
+      let transactionId = await sendTransaction(transaction, connection);
+      setTxSignature(transactionId);
+      toast.success('Transaction submitted successful');
+      console.log(
+        `Transaction submitted: https://explorer.solana.com/tx/${transactionId}?cluster=devnet`
+      );
+    } catch (error: any) {
+      console.log(
+        `Error submitting transaction`,
+        JSON.stringify(error, null, 2)
+      );
+      toast.error(error.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <Card className="w-full sm:w-4/5 md:w-3/5 xl:1/5">

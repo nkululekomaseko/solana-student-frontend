@@ -21,4 +21,16 @@ export class StudentIntro {
     ),
     new StudentIntro('Terminator', "I'm basically here to protect."),
   ];
+
+  borshInstructionSchema = borsh.struct([
+    borsh.u8('variant'),
+    borsh.str('name'),
+    borsh.str('message'),
+  ]);
+
+  serialize(): Buffer {
+    const buffer = Buffer.alloc(1000);
+    this.borshInstructionSchema.encode({ ...this, variant: 0 }, buffer);
+    return buffer.slice(0, this.borshInstructionSchema.getSpan(buffer));
+  }
 }
