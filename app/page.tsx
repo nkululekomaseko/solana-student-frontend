@@ -2,6 +2,8 @@
 
 import BalanceDisplay from '@/components/balance-display';
 import MainNav from '@/components/main-nav';
+import { StudentIntroForm } from '@/components/student-intro-form';
+import StudentInfoList from '@/components/student-intro-list';
 import WalletContextProvider from '@/components/wallet-context-provider';
 
 export default function Home() {
@@ -13,6 +15,8 @@ export default function Home() {
           Solana dAPP
         </h2>
         <BalanceDisplay />
+        <StudentIntroForm />
+        <StudentInfoList />
       </main>
     </WalletContextProvider>
   );

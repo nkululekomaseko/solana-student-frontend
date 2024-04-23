@@ -19,6 +19,6 @@ export class StudentIntro {
       'Jack Nicholson',
       "I want to overhaul the world's financial SystemInstruction. Lower friction payments/transfer, lower fees, faster payouts, better collaterization for loans, etc."
     ),
-    new StudentIntro('Terminator', "I'm basically here to protect"),
+    new StudentIntro('Terminator', "I'm basically here to protect."),
   ];
 }
