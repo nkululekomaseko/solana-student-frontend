@@ -3,12 +3,28 @@
 import React, { useEffect, useState } from 'react';
 import { StudentIntro } from '@/app/models/StudentIntro';
 import StudentInfoCard from './student-intro-card';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
+import { MoveIcon } from 'lucide-react';
+
+const STUDENT_INTRO_PROGRAM_ID = 'HdE95RSVsdb315jfJtaykXhXY478h53X6okDupVfY9yf';
 
 const StudentInfoList = () => {
+  const { connection } = useConnection();
   const [students, setStudents] = useState<Array<StudentIntro>>([]);
 
   useEffect(() => {
-    setStudents(StudentIntro.mocks);
+    connection
+      .getProgramAccounts(new PublicKey(STUDENT_INTRO_PROGRAM_ID))
+      .then(async (accounts) => {
+        const studentIntros: Array<StudentIntro> = accounts
+          .map(({ account }) => StudentIntro.deserialize(account.data))
+          .filter(
+            (account) => !!account && account?.name === 'Nkululeko Maseko'
+          );
+
+        setStudents(studentIntros);
+      });
   }, []);
 
   return (

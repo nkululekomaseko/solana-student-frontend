@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Loader2 } from 'lucide-react';
 import {
@@ -46,7 +46,7 @@ const formSchema = z.object({
 
 type formSchemaType = z.infer<typeof formSchema>;
 
-const StudentIntroForm = () => {
+const StudentIntroForm: FC = () => {
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState('');
   const { connection } = useConnection();
@@ -161,6 +161,8 @@ const StudentIntroForm = () => {
                 <Button variant="link" asChild>
                   <a
                     href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Latest transaction link
                   </a>

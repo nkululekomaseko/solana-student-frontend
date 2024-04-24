@@ -1,10 +1,5 @@
 import React, { FC } from 'react';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from './ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { StudentIntro } from '@/app/models/StudentIntro';
 
 const StudentInfoCard: FC<{ studentIntro: StudentIntro }> = ({
@@ -15,7 +10,7 @@ const StudentInfoCard: FC<{ studentIntro: StudentIntro }> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle>{name.toUpperCase()}</CardTitle>
         <CardDescription>{message}</CardDescription>
       </CardHeader>
     </Card>
